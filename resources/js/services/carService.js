@@ -3,8 +3,15 @@ import axios from 'axios';
 const API_BASE_URL = '/api';
 
 export class CarService {
-    async getCars(page = 1) {
-        const response = await axios.get(`${API_BASE_URL}/cars?page=${page}`);
+    async getCars(page = 1, sortField = null, sortDirection = 'asc') {
+        let url = `${API_BASE_URL}/cars?page=${page}`;
+        
+        // Add sorting parameters
+        if (sortField) {
+            url += `&order[${sortField}]=${sortDirection}`;
+        }
+        
+        const response = await axios.get(url);
 
         // Extract pagination info from response headers or data structure
         const cars = response.data;

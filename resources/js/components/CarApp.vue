@@ -39,10 +39,22 @@
               <table class="table table-hover mb-0">
                 <thead class="table-light">
                   <tr>
-                    <th scope="col">Make</th>
-                    <th scope="col">Model</th>
-                    <th scope="col">Year</th>
-                    <th scope="col">Price</th>
+                    <th scope="col" class="sortable" @click="sortBy('make')">
+                      Make 
+                      <i class="bi" :class="getSortIcon('make')"></i>
+                    </th>
+                    <th scope="col" class="sortable" @click="sortBy('model')">
+                      Model 
+                      <i class="bi" :class="getSortIcon('model')"></i>
+                    </th>
+                    <th scope="col" class="sortable" @click="sortBy('year')">
+                      Year 
+                      <i class="bi" :class="getSortIcon('year')"></i>
+                    </th>
+                    <th scope="col" class="sortable" @click="sortBy('price')">
+                      Price 
+                      <i class="bi" :class="getSortIcon('price')"></i>
+                    </th>
                     <th scope="col" class="text-end">Actions</th>
                   </tr>
                 </thead>
@@ -245,6 +257,8 @@ export default {
         hasNext: false,
         hasPrev: false
       },
+      sortField: null,
+      sortDirection: 'asc',
       loading: false,
       formLoading: false,
       deleteLoading: false,
@@ -270,7 +284,7 @@ export default {
       this.loading = true;
       this.error = null;
       try {
-        const result = await carService.getCars(page);
+        const result = await carService.getCars(page, this.sortField, this.sortDirection);
         this.cars = result.data;
         this.pagination = result.pagination;
       } catch (error) {
@@ -386,7 +400,51 @@ export default {
 
     formatPrice(price) {
       return new Intl.NumberFormat('en-US').format(price);
+    },
+
+    sortBy(field) {
+      if (this.sortField === field) {
+        // If already sorting by this field, toggle direction
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        // If sorting by new field, default to ascending
+        this.sortField = field;
+        this.sortDirection = 'asc';
+      }
+      
+      // Reset to first page when sorting changes
+      this.loadCars(1);
+    },
+
+    getSortIcon(field) {
+      if (this.sortField !== field) {
+        return 'bi-arrow-down-up'; // Default sort icon
+      }
+      
+      return this.sortDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up';
     }
   }
 };
 </script>
+
+<style scoped>
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sortable i {
+  margin-left: 0.25rem;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.sortable:hover i {
+  color: #495057;
+}
+</style>
