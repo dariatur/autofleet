@@ -40,19 +40,19 @@
                 <thead class="table-light">
                   <tr>
                     <th scope="col" class="sortable" @click="sortBy('make')">
-                      Make 
+                      Make
                       <i class="bi" :class="getSortIcon('make')"></i>
                     </th>
                     <th scope="col" class="sortable" @click="sortBy('model')">
-                      Model 
+                      Model
                       <i class="bi" :class="getSortIcon('model')"></i>
                     </th>
                     <th scope="col" class="sortable" @click="sortBy('year')">
-                      Year 
+                      Year
                       <i class="bi" :class="getSortIcon('year')"></i>
                     </th>
                     <th scope="col" class="sortable" @click="sortBy('price')">
-                      Price 
+                      Price
                       <i class="bi" :class="getSortIcon('price')"></i>
                     </th>
                     <th scope="col" class="text-end">Actions</th>
@@ -411,7 +411,7 @@ export default {
         this.sortField = field;
         this.sortDirection = 'asc';
       }
-      
+
       // Reset to first page when sorting changes
       this.loadCars(1);
     },
@@ -420,7 +420,7 @@ export default {
       if (this.sortField !== field) {
         return 'bi-arrow-down-up'; // Default sort icon
       }
-      
+
       return this.sortDirection === 'asc' ? 'bi-sort-alpha-down' : 'bi-sort-alpha-up';
     }
   }

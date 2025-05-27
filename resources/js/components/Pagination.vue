@@ -97,7 +97,6 @@ export default {
       ) {
         range.push(i);
       }
-
       return range;
     },
 
@@ -106,7 +105,7 @@ export default {
     },
 
     showLastPage() {
-      return this.pagination.totalPages > 1 && this.pagination.currentPage !== this.pagination.totalPages;
+      return this.pagination.totalPages > 1 ;
     },
 
     showStartEllipsis() {

@@ -27,14 +27,32 @@ class CarDataProvider implements ProviderInterface
     private function getCachedCarCollection(array $context): array
     {
         $page = $context['filters']['page'] ?? 1;
-        $limit = 30;
-        $cacheKey = "cars_collection_page_{$page}";
+        $order = $context['filters']['order'] ?? [];
+        $limit = $context['operation']->getPaginationItemsPerPage();
 
-        $cars = Cache::remember($cacheKey, 1, function () use ($page, $limit) {
-            return Car::skip(($page - 1) * $limit)
-                     ->take($limit)
-                     ->get()
-                     ->toArray();
+        // Build cache key including sorting parameters
+        $orderKey = !empty($order) ? '_' . http_build_query($order) : '';
+        $cacheKey = "cars_collection_page_{$page}{$orderKey}";
+
+        $cars = Cache::remember($cacheKey, 1, function () use ($page, $limit, $order) {
+            $query = Car::query();
+
+            // Apply sorting
+            if (!empty($order)) {
+                foreach ($order as $field => $direction) {
+                    if (in_array($field, ['make', 'model', 'year', 'price'])) {
+                        $query->orderBy($field, $direction === 'desc' ? 'desc' : 'asc');
+                    }
+                }
+            } else {
+                // Default sorting by make ascending
+                $query->orderBy('make', 'asc');
+            }
+
+            return $query->skip(($page - 1) * $limit)
+                        ->take($limit)
+                        ->get()
+                        ->toArray();
         });
 
         return $cars;
