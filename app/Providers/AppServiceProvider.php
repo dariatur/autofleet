@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\State\CarResponseStateProcessor;
+use ApiPlatform\State\ProcessorInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+		$this->app->tag(CarResponseStateProcessor::class, ProcessorInterface::class);
     }
 }

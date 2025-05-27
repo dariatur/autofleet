@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->append(\App\Http\Middleware\AddCarTotalCountHeader::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

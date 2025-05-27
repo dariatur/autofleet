@@ -14,7 +14,6 @@ class CarDataProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         if ($operation instanceof GetCollection) {
-
             return $this->getCachedCarCollection($context);
         }
 
@@ -31,11 +30,13 @@ class CarDataProvider implements ProviderInterface
         $limit = 30;
         $cacheKey = "cars_collection_page_{$page}";
 
-        return Cache::remember($cacheKey, 300, function () use ($page, $limit) {
+        $cars = Cache::remember($cacheKey, 1, function () use ($page, $limit) {
             return Car::skip(($page - 1) * $limit)
                      ->take($limit)
                      ->get()
                      ->toArray();
         });
+
+        return $cars;
     }
 }
