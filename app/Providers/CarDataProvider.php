@@ -34,7 +34,7 @@ class CarDataProvider implements ProviderInterface
         $orderKey = !empty($order) ? '_' . http_build_query($order) : '';
         $cacheKey = "cars_collection_page_{$page}{$orderKey}";
 
-        $cars = Cache::remember($cacheKey, 1, function () use ($page, $limit, $order) {
+        $cars = Cache::remember($cacheKey, 300, function () use ($page, $limit, $order) {
             $query = Car::query();
 
             // Apply sorting
@@ -49,12 +49,15 @@ class CarDataProvider implements ProviderInterface
                 $query->orderBy('make', 'asc');
             }
 
-            return $query->skip(($page - 1) * $limit)
+            return [
+                'count' => $query->count(),
+                'items' => $query->skip(($page - 1) * $limit)
                         ->take($limit)
                         ->get()
-                        ->toArray();
+                        ->toArray()
+                ];
         });
-
-        return $cars;
+        $context['request']->attributes->set('car_total_count', [$cars['count']]);
+        return $cars['items'];
     }
 }
