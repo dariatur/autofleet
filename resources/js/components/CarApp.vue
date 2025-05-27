@@ -271,7 +271,7 @@ export default {
         make: '',
         model: '',
         year: new Date().getFullYear(),
-        price: ''
+        price: null
       },
       formErrors: {}
     };
@@ -318,6 +318,12 @@ export default {
       this.formErrors = {};
       this.error = null;
 
+      // Frontend validation
+      if (!this.validateForm()) {
+        this.formLoading = false;
+        return;
+      }
+
       try {
         if (this.isEditing) {
           await carService.updateCar(this.form.id, {
@@ -353,6 +359,42 @@ export default {
       }
     },
 
+    validateForm() {
+      this.formErrors = {};
+      let isValid = true;
+
+      // Validate required fields
+      if (!this.form.make || this.form.make.trim() === '') {
+        this.formErrors.make = 'Make is required';
+        isValid = false;
+      }
+
+      if (!this.form.model || this.form.model.trim() === '') {
+        this.formErrors.model = 'Model is required';
+        isValid = false;
+      }
+
+      // Validate year - must not be empty and must be a valid number
+      if (!this.form.year || this.form.year === '' || this.form.year === null) {
+        this.formErrors.year = 'Year is required';
+        isValid = false;
+      } else if (this.form.year < 2000 || this.form.year > 2025) {
+        this.formErrors.year = 'Year must be between 2000 and 2025';
+        isValid = false;
+      }
+
+      // Validate price - must not be empty and must be a valid number
+      if (!this.form.price || this.form.price === '' || this.form.price === null) {
+        this.formErrors.price = 'Price is required';
+        isValid = false;
+      } else if (this.form.price < 100) {
+        this.formErrors.price = 'Price must be at least $100';
+        isValid = false;
+      }
+
+      return isValid;
+    },
+
     confirmDelete(car) {
       this.carToDelete = car;
       this.showModal('deleteModal');
@@ -381,7 +423,7 @@ export default {
         make: '',
         model: '',
         year: new Date().getFullYear(),
-        price: ''
+        price: null
       };
       this.formErrors = {};
     },

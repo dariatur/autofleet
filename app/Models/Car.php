@@ -58,7 +58,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
     ],
     normalizationContext: ['groups' => ['car']],
     denormalizationContext: ['groups' => ['car']],
-    order: ['make' => 'ASC'],
+    order: ['id' => 'ASC'],
     rules: [
         'make' => 'required',
         'model' => 'required',
