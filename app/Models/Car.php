@@ -58,12 +58,13 @@ use Symfony\Component\Serializer\Attribute\Groups;
     ],
     normalizationContext: ['groups' => ['car']],
     denormalizationContext: ['groups' => ['car']],
+    order: ['make' => 'ASC'],
     rules: [
         'make' => 'required',
         'model' => 'required',
         'year' => 'required|integer|min:2000|max:2025',
         'price' => 'required|integer|min:100',
-    ],
+    ]
 )]
 class Car extends Model
 {
