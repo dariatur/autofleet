@@ -22,6 +22,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
                 summary: 'List of all cars',
                 description: 'Retrieves a collection of cars available.',
             ),
+            provider: \App\Providers\CarDataProvider::class,
         ),
         new Get(
             openapi: new Operation(
@@ -84,6 +85,17 @@ class Car extends Model
         'year' => 'integer',
         'price' => 'integer',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::flush();
+        });
+
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::flush();
+        });
+    }
 
     #[Groups('car')]
     public function getId(): string
