@@ -17,8 +17,8 @@ use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\Serializer\NameConverter\SnakeCaseToCamelCaseNameConverter;
 
 return [
-    'title' => 'Auto Fleet Command',
-    'description' => 'Auto Fleet Command API',
+    'title' => 'Auto Fleet',
+    'description' => 'Auto Fleet API',
     'version' => '1.0.0',
     'show_webby' => true,
 
