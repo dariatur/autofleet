@@ -14,12 +14,23 @@ class CarCacheTest extends TestCase
     use RefreshDatabase;
     use ApiTestAssertionsTrait;
 
+    public function testInitCarCollectionCaching(): void
+    {
+        Car::factory()->count(10)->create();
+        $response1 = $this->getJson('/api/cars');
+        $response1->assertStatus(200);
+        $this->assertDatabaseCount('cars', 10);
+    }
+
+
     public function testCarCollectionCaching(): void
     {
         Car::factory()->count(10)->create();
 
         $response1 = $this->getJson('/api/cars');
         $response1->assertStatus(200);
+
+        $response1->assertHeader('x-total-count', 10);
 
         // Was cache created?
         $this->assertTrue(Cache::has('cars_collection_page_1'));

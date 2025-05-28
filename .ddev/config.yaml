@@ -18,6 +18,7 @@ hooks:
     - exec: "mysql -uroot -proot -e \"CREATE DATABASE IF NOT EXISTS db_testing; GRANT ALL ON db_testing.* to 'db'@'%';\""
     - exec: "composer install"
     - exec: "artisan migrate --force"
+    - exec: "php artisan migrate --env=testing --force"
     - exec: "artisan api-platform:install"
     - exec: "artisan test"
     - exec: "npm install"

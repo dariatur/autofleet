@@ -45,9 +45,9 @@ npm run build
 
 На этом этапе проект должен быть готов к работе. 
 
-Вы можете открыть его в браузере по адресу `https://autofleet.ddev.site`
+Вы можете открыть его в браузере по адресу `https://plctest.ddev.site`
 
-Документация API доступна по адресу `https://autofleet.ddev.site/api/docs`
+Документация API доступна по адресу `https://plctest.ddev.site/api/docs`
 
 ## Реализация API
 ### Основные сущности
