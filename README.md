@@ -1,5 +1,114 @@
 # Auto Fleet
 
+## Installation and Setup
+To quickly launch the project you will need docker and ddev. You can run the project without ddev, but then you'll need to configure the environment yourself.
+**Note:** The repository includes a .env file with settings for connecting to containers inside ddev. In a real project, of course, this should not be done.
+
+### Installation
+1. Install ddev by following the [official documentation](https://ddev.com/get-started/).
+2. Clone the repository:
+```bash  
+git clone https://github.com/maxmishyn/autofleet
+```
+3. Navigate to the project directory and start ddev:
+```bash  
+cd autofleet 
+```
+4. Start ddev:
+```bash
+ddev start
+```
+Note that when starting ddev, it automatically performs all subsequent operations from step 5 through step 9.
+
+5. Install dependencies using Composer:
+```bash
+ddev composer install
+```
+6. Run database migrations:
+```bash
+ddev artisan migrate
+```
+7. Install resources for API documentation rendering:
+```bash
+ddev artisan api-platform:install
+```
+
+8. Run tests to make sure everything works:
+```bash
+ddev artisan test
+```
+9. Frontend compilation:
+```bash
+npm install
+npm run build
+```
+
+At this stage, the project should be ready to work.
+
+You can open it in your browser at `https://plctest.ddev.site`
+
+API documentation is available at `https://plctest.ddev.site/api/docs`
+
+## API Implementation
+### Main Entities
+#### Car
+An entity representing a car in the system. It has the following fields:
+- **id**: Unique car identifier. The chosen type - ULID allows using it in URLs just like UUID without fear of identifier guessing. But unlike UUID, ULID preserves sorting by creation time, which reduces the load on the database index.
+- **make**: Car make. In real projects, this field and the model field would likely be foreign keys referencing other tables to avoid data duplication and ensure flexibility when adding new makes and models.
+- **model**: Car model.
+- **year**: Car production year. For the test task, range restrictions from 2000 to 2025 are used.
+- **price**: Car price. Uses `integer` type. Validator checks that the price is not less than 100.
+
+## API Methods
+#### Get list of cars
+GET /api/cars
+- Returns a list of all cars in the system.
+- Content is paginated. Default page size is 30 cars. Current page is determined by the `page` parameter.
+- Total number of cars is returned in the `X-Total-Count` header to support pagination. Page size is specified in the `X-Page-Count` header.
+
+#### Get car information
+GET /api/cars/{id}
+- Returns car information by its unique identifier.
+
+#### Create new car
+POST /api/cars
+- Creates a new car in the system.
+- Request body must contain JSON with `make`, `model`, `year` and `price` fields.
+
+#### Update car information
+PUT /api/cars/{id}
+- Updates car information by its unique identifier.
+- Request body must contain JSON with `make`, `model`, `year` and `price` fields.
+
+- _Note: this method's test is disabled because I accidentally found that there's a bug in the Laravel implementation of API Platform that prevents updating indexed fields. (https://github.com/api-platform/core/issues/7182).
+Nevertheless, PUT is not used in SPA, so this doesn't limit functionality in any way._
+
+#### Partial update of car information
+PATCH /api/cars/{id}
+- Partially updates car information by its unique identifier.
+- Request body may contain JSON with any of the fields `make`, `model`, `year` and `price`.
+- If a field is not specified, it will not be changed.
+
+#### Delete car
+DELETE /api/cars/{id}
+- Deletes a car from the system by its unique identifier.
+
+In case of validation errors or other errors, the API returns HTTP status 422 and an error message in JSON format.
+
+## Optimization
+As an example of caching for the GET /api/cars query, result caching in Redis using Laravel tools has been implemented. See implementation in app/Providers/CarDataProvider.php
+It should be noted that the example uses a maximally simplified system for generating cached object identifiers. Actually, it's tied simply to the page number field for sorting.
+
+## Automated Tests
+The project contains a set of automated tests that check the main API functions. Tests cover the following aspects:
+- CRUD operations for cars including invalid data handling
+- testing cache for car selection and its invalidation
+- unit tests for Car
+
+----------------------------------------------------
+
+# Auto Fleet
+
 ## Установка и настройка
 Проект для быстрого запуска вам понадобится docker и ddev. Можно запустить проект без ddev, но тогда вам придется самостоятельно настраивать окружение.
 **Примечание** В репозитарий включен файл .env с настройками для подключения к контейнерам внутри ddev. В реальном проекте, само собой, так делать не стоит. 
