@@ -36,7 +36,7 @@ jobs:
         run: ddev start
 
       - name: Install playwright
-        run: npm install playwright
+        run: npx playwright install
 
       - name: Run Playwright UI tests
         run: npm run test:ui
