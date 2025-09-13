@@ -3,15 +3,23 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "test:ui": "rm -rf allure-results && npx playwright test"
     },
     "devDependencies": {
+        "@faker-js/faker": "^10.0.0",
+        "@playwright/test": "^1.55.0",
         "@tailwindcss/vite": "^4.0.0",
+        "@types/node": "^24.3.0",
         "@vitejs/plugin-vue": "^5.2.4",
+        "allure-playwright": "^3.3.3",
         "axios": "^1.8.2",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.2.0",
+        "playwright": "^1.55.0",
         "tailwindcss": "^4.0.0",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.2",
         "vite": "^6.2.4"
     },
     "dependencies": {
