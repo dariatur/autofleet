@@ -49,7 +49,7 @@ export class CarManagementPage extends PageObject {
           const count = await this.tableRows.count();
           if (await this.page.getByText('No cars found.').isVisible()) break;
     
-          const row = this.tableRows.nth(1);
+          const row = this.tableRows.nth(0);
           const deleteButton = row.locator('button.btn-outline-danger');
       
           await deleteButton.click();
