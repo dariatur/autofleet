@@ -1,13 +1,29 @@
 import { Page, Locator, expect } from "@playwright/test";
 
 import { PageObject } from "./page-object.js";
-import { Car } from '../entity/car';
+import { Car } from '../entity/car.js';
+import { NewCarModalPage } from './new-car-modal-page';
+import { EditCarModalPage } from './edit-car-modal-page';
 
 export class CarManagementPage extends PageObject {
     readonly addNewCarButton: Locator = this.page.getByRole("button", { name: "Add New Car" });
     readonly alertMessage: Locator = this.page.getByRole("alert");
     readonly tableRows: Locator = this.page.locator('tbody tr');
     readonly nextButton: Locator = this.page.getByRole('button', { name: 'Next page' });
+    readonly CAR_MESSAGES = {
+        ADDED_SUCCESS: "Car added successfully!",
+        UPDATED_SUCCESS: "Car updated successfully!",
+        DELETED_SUCCESS: "Car deleted successfully!",
+    };
+    readonly newCarModalPage: NewCarModalPage = new NewCarModalPage(this.page);
+    readonly editCarModalPage: EditCarModalPage = new EditCarModalPage(this.page);
+    readonly deleteCarModal = this.page.locator('div.modal.fade').filter({
+        hasText: 'Confirm Delete'
+    });
+    readonly editCarModal = this.page.locator('div.modal.fade').filter({
+        has: this.page.locator('.modal-title', { hasText: 'Edit Car' })
+    });
+
 
     constructor(page: Page) {
         super(page);
@@ -17,10 +33,22 @@ export class CarManagementPage extends PageObject {
         await this.addNewCarButton.click();
     }
 
+    async clickOnEditButton(car: Car) {
+        const priceText = '$' + car.price.toLocaleString('en-US');
+        const row = this.tableRows
+            .filter({ hasText: car.make })
+            .filter({ hasText: car.model })
+            .filter({ hasText: car.year.toString() })
+            .filter({ hasText: priceText });
+        row.getByRole('button').nth(0).click();
+        
+        await expect(this.editCarModal).toHaveClass(/show/, { timeout: 5000 });
+    }
+
     async getCarRow(car: Car): Promise<Locator | null> {
+        this.page.waitForLoadState('load');
         const priceText = '$' + car.price.toLocaleString('en-US');
         while (true) {
-            await this.page.waitForTimeout(200);
             const rows = this.tableRows
                 .filter({ hasText: car.make })
                 .filter({ hasText: car.model })
@@ -44,23 +72,6 @@ export class CarManagementPage extends PageObject {
         return null;
     }
 
-    async clearTable() {
-        while (true) {
-          const count = await this.tableRows.count();
-          if (await this.page.getByText('No cars found.').isVisible()) break;
-    
-          const row = this.tableRows.nth(0);
-          const deleteButton = row.locator('button.btn-outline-danger');
-      
-          await deleteButton.click();
-      
-          const confirmButton = this.page.getByRole('button', { name: 'Delete Car' });
-          await confirmButton.click();
-      
-          await this.page.waitForTimeout(1000);
-        }
-      }
-
     async deleteCar(car: Car) {
         const priceText = '$' + car.price.toLocaleString('en-US');
         await this.tableRows
@@ -68,8 +79,10 @@ export class CarManagementPage extends PageObject {
             .filter({ hasText: car.model })
             .filter({ hasText: car.year.toString() })
             .filter({ hasText: priceText })
-            .locator('button.btn-outline-danger').click();
+            .locator('button.btn-outline-danger').click(); //добавить модалку
         
-        await this.page.getByRole('button', { name: 'Delete Car' }).click();
+        await expect(this.deleteCarModal).toBeVisible({ timeout: 5000 });
+        await this.page.getByRole('button', { name: 'Delete Car' }).click(); 
+        await expect(this.deleteCarModal).toBeHidden({ timeout: 5000 });
     }
 }

@@ -23,20 +23,6 @@ export class CarFactory {
   }
 
   createMany(count: number): Car[] {
-    const cars: Car[] = [];
-    const usedKeys = new Set<string>(); // для уникальных комбинаций make+model
-
-    while (cars.length < count) {
-      const car = this.create();
-      const key = `${car.make}-${car.model}`;
-
-    // если комбинация ещё не встречалась, добавляем
-      if (!usedKeys.has(key)) {
-        usedKeys.add(key);
-        cars.push(car);
-      }
-    }
-
-    return cars;
+    return Array.from({ length: count }, () => this.create()) as Car[];
   }
 }
