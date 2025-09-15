@@ -4,46 +4,57 @@ on:
   workflow_dispatch:
   push:
     branches-ignore:
-      - 'main'
+      - 'main' 
+      //хотела чтобы запускался по пушу на мою ветку, а не в main
   pull_request:
     branches:
       - '*' 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest 
+    //на ubuntu пайплайны работают быстрее.
 
     env:
-      DDEV_SITENAME: mysite
+      DDEV_SITENAME: mysite 
+      // установить env для тула ddev
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3 
+        //для подгрузки кода
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '20' 
+          //установить версию Node.js
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci 
+        //установка зависимостей
 
       - name: Install DDEV
         run: |
           curl -LO https://raw.githubusercontent.com/drud/ddev/master/scripts/install_ddev.sh
-          bash install_ddev.sh
+          bash install_ddev.sh 
+          //установка ddev
 
       - name: Start DDEV environment
         run: ddev start
+        //тут уже команда для запуска нашего проекта
 
       - name: Install playwright
         run: npx playwright install
+        //установка playwright для запуска автотестов
 
       - name: Run Playwright UI tests
-        run: npm run test:ui
+        run: npm run test:e2e
+        //запуск автотестов (e2e)
 
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
-          path: allure-results
+          path: allure-results 
+          //загрузка результатов автотестов в артефакты

@@ -42,6 +42,10 @@ ddev artisan test
 npm install
 npm run build
 ```
+10. Run e2e tests
+```bash
+npm run test:e2e
+```
 
 At this stage, the project should be ready to work.
 
@@ -150,6 +154,10 @@ ddev artisan test
 ```bash
 npm install
 npm run build
+```
+10. Запустить e2e тесты
+```bash
+npm run test:e2e
 ```
 
 На этом этапе проект должен быть готов к работе. 

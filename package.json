@@ -4,7 +4,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "test:e2e": "rm -rf allure-results && npx playwright test"
+        "test:e2e": "rm -rf allure-results && npx playwright test tests/e2e/tests/*.spec.ts"
     },
     "devDependencies": {
         "@faker-js/faker": "^10.0.0",
